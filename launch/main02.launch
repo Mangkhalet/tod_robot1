@@ -1,0 +1,28 @@
+<launch>
+   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+   <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
+      <rosparam file="$(find ros_arduino_python)/config/my_arduino_params.yaml" command="load" />
+   </node>
+  <node name="usb_cam1" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video1"></param>
+    <param name="image_width" value="640"></param>
+    <param name="image_height" value="480"></param>
+    <param name="pixel_format" value="yuyv"></param>
+    <param name="camera_frame_id" value="usb_cam"></param>
+    <param name="io_method" value="mmap"></param>
+  </node>
+  <node name="usb_cam0" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0"></param>
+    <param name="image_width" value="640"></param>
+    <param name="image_height" value="480"></param>
+    <param name="pixel_format" value="yuyv"></param>
+    <param name="camera_frame_id" value="usb_cam"></param>
+    <param name="io_method" value="mmap"></param>
+  </node>
+    <node name="web_video_server1" pkg="web_video_server" type="web_video_server">
+  </node>
+  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/usb_cam0/image_raw"/>
+    <param name="autosize" value="true"></param>
+  </node>
+</launch>
